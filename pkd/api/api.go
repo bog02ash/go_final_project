@@ -14,6 +14,11 @@ func taskHandler(w http.ResponseWriter, r *http.Request) {
 		updateHandler(w, r)
 	case http.MethodDelete:
 		deleteHandler(w, r)
+	default:
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		if _, err := w.Write([]byte("405 Method Not Allowed")); err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
 	}
 }
 

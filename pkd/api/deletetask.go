@@ -2,8 +2,9 @@ package api
 
 import (
 	"encoding/json"
-	"my_project/pkd/db"
 	"net/http"
+
+	"my_project/pkd/db"
 )
 
 func deleteHandler(w http.ResponseWriter, r *http.Request) {

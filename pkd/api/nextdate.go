@@ -28,7 +28,9 @@ func nextDate(now time.Time, dstart string, repeat string) (string, error) {
 		}
 	}
 	repeatSplit := strings.Split(repeat, " ")
-
+	if len(repeatSplit) < 2 && repeatSplit[0] == "d" {
+		return "", errors.New("interval missing for daily repeat")
+	}
 	if repeatSplit[0] != "d" && repeatSplit[0] != "y" {
 		return "", errors.New("unsupported formatting")
 	}
@@ -51,11 +53,10 @@ func nextDate(now time.Time, dstart string, repeat string) (string, error) {
 
 }
 func nextDayHandler(w http.ResponseWriter, r *http.Request) {
-	defer func() {
-		if err := recover(); err != nil {
-			http.Error(w, "Внутренняя ошибка сервера", http.StatusInternalServerError)
-		}
-	}()
+	if r.Method != http.MethodGet {
+		http.Error(w, "Метод не разрешён", http.StatusMethodNotAllowed)
+		return
+	}
 	date := r.FormValue("date")
 	repeat := r.FormValue("repeat")
 	nowStr := r.FormValue("now")
@@ -63,9 +64,11 @@ func nextDayHandler(w http.ResponseWriter, r *http.Request) {
 	var err error
 	if date == "" {
 		http.Error(w, "Неуказана дата", http.StatusBadRequest)
+		return
 	}
 	if repeat == "" {
 		http.Error(w, "Не указано повторение", http.StatusBadRequest)
+		return
 	}
 	if nowStr == "" {
 		nowTime = time.Now()
@@ -83,5 +86,5 @@ func nextDayHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(writer))
+	_, _ = w.Write([]byte(writer))
 }

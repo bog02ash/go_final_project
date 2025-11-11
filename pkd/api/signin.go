@@ -6,8 +6,6 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
-	"os"
-
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -22,6 +20,12 @@ type signinReq struct {
 
 var secretKey = []byte("secret_key")
 
+var pass string
+
+func InitPassword(password string) {
+	pass = password
+}
+
 func checksumPassword(pass string) string {
 	hash := sha256.Sum256([]byte(pass))
 	return hex.EncodeToString(hash[:])
@@ -29,7 +33,6 @@ func checksumPassword(pass string) string {
 
 func auth(next http.HandlerFunc) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		pass := os.Getenv("TODO_PASSWORD")
 		if len(pass) > 0 {
 			var jwtCookie string
 			cookie, err := r.Cookie("token")
@@ -74,7 +77,6 @@ func signinHandler(w http.ResponseWriter, r *http.Request) {
 		respErrJSON(w, "Ошибка десириализации", http.StatusBadRequest)
 		return
 	}
-	pass := os.Getenv("TODO_PASSWORD")
 	if signinReq.Password != pass {
 		respErrJSON(w, "Пароль неверный", http.StatusBadRequest)
 		return

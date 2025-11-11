@@ -24,7 +24,7 @@ func AddTask(task *Task) (int64, error) {
 	return id, err
 }
 func SearchWord(search string, limit int) ([]*Task, error) {
-	query := `SELECT * FROM scheduler WHERE title LIKE :search OR comment LIKE :search ORDER BY date LIMIT :limit`
+	query := `SELECT id, date, title, comment, repeat FROM scheduler WHERE title LIKE :search OR comment LIKE :search ORDER BY date LIMIT :limit`
 	rows, err := db.Query(query, sql.Named("search", "%"+search+"%"), sql.Named("limit", limit))
 	if err != nil {
 		return nil, err
@@ -46,7 +46,7 @@ func SearchWord(search string, limit int) ([]*Task, error) {
 	return tasks, nil
 }
 func SearchData(date string, limit int) ([]*Task, error) {
-	query := `SELECT * FROM scheduler WHERE date = :date LIMIT :limit`
+	query := `SELECT id, date, title, comment, repeat FROM scheduler WHERE date = :date LIMIT :limit`
 	rows, err := db.Query(query, sql.Named("date", date), sql.Named("limit", limit))
 	if err != nil {
 		return nil, err

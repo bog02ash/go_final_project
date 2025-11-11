@@ -2,12 +2,17 @@ package api
 
 import (
 	"encoding/json"
-	"my_project/pkd/db"
 	"net/http"
 	"time"
+
+	"my_project/pkd/db"
 )
 
 func doneHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet && r.Method != http.MethodPost {
+		respErrJSON(w, "Метод не разрешен", http.StatusMethodNotAllowed)
+		return
+	}
 	id := r.URL.Query().Get("id")
 	if id == "" {
 		respErrJSON(w, "Идентификатор не указан", http.StatusBadRequest)

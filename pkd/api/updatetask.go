@@ -3,8 +3,9 @@ package api
 import (
 	"encoding/json"
 	"io"
-	"my_project/pkd/db"
 	"net/http"
+
+	"my_project/pkd/db"
 )
 
 func updateHandler(w http.ResponseWriter, r *http.Request) {
